@@ -18,7 +18,7 @@ public class FileUploader {
     public static void main(String args[]) throws Exception
     {
         FileUploader fileUpload = new FileUploader () ;
-        File file = new File("C:\\Users\\Bonheur\\Pictures\\Camera Roll\\win.jpg") ;
+        File file = new File("C:/win.jpg") ;
         //Upload the file
         fileUpload.executeMultiPartRequest("http://localhost:8081/rest/upload/image-upload",
                 file, file.getName(), "File Uploaded :: win.jpg") ;
