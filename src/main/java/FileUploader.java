@@ -1,6 +1,8 @@
 
-import java.io.File;
-
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.multipart.FormDataBodyPart;
+import com.sun.jersey.multipart.FormDataMultiPart;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -9,7 +11,10 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import javax.ws.rs.core.MediaType;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * Created by Bonheur on 30/12/2014.
@@ -20,10 +25,21 @@ public class FileUploader {
         FileUploader fileUpload = new FileUploader () ;
         File file = new File("C:/win.jpg") ;
         //Upload the file
-        fileUpload.executeMultiPartRequest("http://localhost:8081/rest/upload/image-upload",
-                file, file.getName(), "File Uploaded :: win.jpg") ;
+        //fileUpload.executeMultiPartRequest("http://localhost:8081/rest/upload/file/",
+               // file, file.getName(), "File Uploaded :: win.jpg") ;
+        String test = upload("http://localhost:8081/rest/upload/file/", file);
     }
-
+    public static String upload(String url, File uploadFile) throws IOException {
+        WebResource resource = Client.create().resource(url);
+        FormDataMultiPart form = new FormDataMultiPart();
+        form.field("fileName", uploadFile.getName());
+        FormDataBodyPart fdp = new FormDataBodyPart("content",
+                new FileInputStream(uploadFile),
+                MediaType.APPLICATION_OCTET_STREAM_TYPE);
+        form.bodyPart(fdp);
+        String response = resource.type(MediaType.MULTIPART_FORM_DATA).post(String.class, form);
+        return response;
+    }
     public void executeMultiPartRequest(String urlString, File file, String fileName, String fileDescription) throws Exception
     {
         HttpClient client = new DefaultHttpClient() ;
